@@ -1,2 +1,2 @@
-import { NextResponse } from 'next/server'; import { googleAuthUrl } from '@/lib/google';
-export async function GET(){return NextResponse.redirect(googleAuthUrl());}
+import { NextRequest, NextResponse } from 'next/server'; import { googleOAuth, saveGoogleTokens } from '@/lib/google';
+export async function GET(req:NextRequest){const code=req.nextUrl.searchParams.get('code'); if(!code)return NextResponse.json({error:'missing code'},{status:400}); const o=googleOAuth(); const {tokens}=await o.getToken(code); await saveGoogleTokens(tokens); return NextResponse.redirect(new URL('/?google=connected',req.url));}
